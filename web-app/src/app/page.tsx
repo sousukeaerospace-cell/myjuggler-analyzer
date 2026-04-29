@@ -8,6 +8,7 @@ import AlertBanner from "@/components/AlertBanner";
 import StatsDisplay from "@/components/StatsDisplay";
 import SessionHistory, { saveToHistory } from "@/components/SessionHistory";
 import PriorSettings from "@/components/PriorSettings";
+import PrevDayInput from "@/components/PrevDayInput";
 import { MachineRecord } from "@/lib/types";
 import { isSpecialDay } from "@/lib/bayesian";
 import { HIGH_SETTING_THRESHOLD } from "@/lib/constants";
@@ -16,6 +17,7 @@ function App() {
   const { session, dispatch } = useStore();
   const [showHistory, setShowHistory]       = useState(false);
   const [showPrior, setShowPrior]           = useState(false);
+  const [showPrevDay, setShowPrevDay]       = useState(false);
   const [importedMachines, setImportedMachines] = useState<MachineRecord[]>([]);
   const [threshold, setThreshold]           = useState(HIGH_SETTING_THRESHOLD);
   const [machineInput, setMachineInput]     = useState(session.machineNumber);
@@ -90,6 +92,13 @@ function App() {
           </div>
           <div className="flex gap-2">
             <button
+              onClick={() => setShowPrevDay(true)}
+              className="bg-blue-900 text-blue-300 rounded-lg px-3 py-1.5 text-xs font-semibold active:bg-blue-800 border border-blue-700"
+              title="前日データを手動入力"
+            >
+              📝 前日
+            </button>
+            <button
               onClick={() => fileRef.current?.click()}
               className="bg-gray-800 text-gray-300 rounded-lg px-3 py-1.5 text-xs font-semibold active:bg-gray-700"
               title="前日JSONをインポート"
@@ -100,7 +109,7 @@ function App() {
               onClick={() => setShowHistory(true)}
               className="bg-gray-800 text-gray-300 rounded-lg px-3 py-1.5 text-xs font-semibold active:bg-gray-700"
             >
-              📋 履歴
+              📋
             </button>
           </div>
           <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
@@ -172,6 +181,16 @@ function App() {
 
       {/* モーダル */}
       {showHistory && <SessionHistory onClose={() => setShowHistory(false)} />}
+      {showPrevDay && (
+        <PrevDayInput
+          onClose={() => setShowPrevDay(false)}
+          onSave={(machines) => {
+            setImportedMachines(machines);
+            setShowPrevDay(false);
+          }}
+          existing={importedMachines}
+        />
+      )}
       {showPrior && (
         <PriorSettings
           onClose={() => setShowPrior(false)}
