@@ -9,11 +9,13 @@ function logLikelihood(
   soloRegCount: number,
   cherryBigCount: number,
   cherryRegCount: number,
+  grapeCount: number,
 ): number {
   const spec = SETTINGS[s];
   const otherRate =
-    1 - spec.soloBigRate - spec.soloRegRate - spec.cherryBigRate - spec.cherryRegRate;
-  const otherCount = totalSpins - soloBigCount - soloRegCount - cherryBigCount - cherryRegCount;
+    1 - spec.soloBigRate - spec.soloRegRate - spec.cherryBigRate - spec.cherryRegRate - spec.grapeRate;
+  const otherCount =
+    totalSpins - soloBigCount - soloRegCount - cherryBigCount - cherryRegCount - grapeCount;
 
   if (otherCount < 0) return -Infinity;
 
@@ -22,6 +24,7 @@ function logLikelihood(
     soloRegCount   * Math.log(spec.soloRegRate   + 1e-20) +
     cherryBigCount * Math.log(spec.cherryBigRate + 1e-20) +
     cherryRegCount * Math.log(spec.cherryRegRate + 1e-20) +
+    grapeCount     * Math.log(spec.grapeRate     + 1e-20) +
     otherCount     * Math.log(otherRate          + 1e-20)
   );
 }
@@ -32,13 +35,16 @@ export function computePosteriors(
   soloRegCount: number,
   cherryBigCount: number,
   cherryRegCount: number,
+  grapeCount: number,
   prior: number[],
 ): number[] {
   const logPost: number[] = [];
 
   for (let i = 0; i < SETTING_COUNT; i++) {
     const s = i + 1;
-    const ll = logLikelihood(s, totalSpins, soloBigCount, soloRegCount, cherryBigCount, cherryRegCount);
+    const ll = logLikelihood(
+      s, totalSpins, soloBigCount, soloRegCount, cherryBigCount, cherryRegCount, grapeCount,
+    );
     logPost.push(ll + Math.log(prior[i] + 1e-20));
   }
 
@@ -84,7 +90,7 @@ export function carryoverPrior(
 
   // 前日データはBIG/REGの集計のみ既知なので、全てsoloとして近似する
   const prevPosteriors = computePosteriors(
-    prevTotalSpins, prevBig, prevReg, 0, 0, uniformPrior,
+    prevTotalSpins, prevBig, prevReg, 0, 0, 0, uniformPrior,
   );
 
   const carryoverRate = 0.60;

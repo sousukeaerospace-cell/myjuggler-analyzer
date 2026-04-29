@@ -7,6 +7,7 @@ export interface SettingSpec {
   soloRegRate:   number;  // 単独REG確率 (最大の設定差)
   cherryBigRate: number;  // チェリー重複BIG確率 (全設定ほぼ同一)
   cherryRegRate: number;  // チェリー重複REG確率
+  grapeRate:     number;  // ブドウ確率
   rtp: number;            // 機械割
 }
 
@@ -17,6 +18,7 @@ export const SETTINGS: Record<number, SettingSpec> = {
     soloRegRate:   1 / 409.6,
     cherryBigRate: 1 / 1092.0,
     cherryRegRate: 1 / 1213.6,
+    grapeRate:     1 / 6.06,
     rtp: 0.970,
   },
   2: {
@@ -25,6 +27,7 @@ export const SETTINGS: Record<number, SettingSpec> = {
     soloRegRate:   1 / 375.3,
     cherryBigRate: 1 / 1092.0,
     cherryRegRate: 1 / 1138.0,
+    grapeRate:     1 / 5.98,
     rtp: 0.984,
   },
   3: {
@@ -33,6 +36,7 @@ export const SETTINGS: Record<number, SettingSpec> = {
     soloRegRate:   1 / 340.5,
     cherryBigRate: 1 / 1092.0,
     cherryRegRate: 1 / 1092.0,
+    grapeRate:     1 / 5.95,
     rtp: 0.999,
   },
   4: {
@@ -41,6 +45,7 @@ export const SETTINGS: Record<number, SettingSpec> = {
     soloRegRate:   1 / 321.3,
     cherryBigRate: 1 / 1092.0,
     cherryRegRate: 1 / 1024.0,
+    grapeRate:     1 / 5.89,
     rtp: 1.023,
   },
   5: {
@@ -49,6 +54,7 @@ export const SETTINGS: Record<number, SettingSpec> = {
     soloRegRate:   1 / 278.8,
     cherryBigRate: 1 / 1092.0,
     cherryRegRate: 1 /  936.0,
+    grapeRate:     1 / 5.81,
     rtp: 1.051,
   },
   6: {
@@ -57,6 +63,7 @@ export const SETTINGS: Record<number, SettingSpec> = {
     soloRegRate:   1 / 229.1,
     cherryBigRate: 1 / 1092.0,
     cherryRegRate: 1 /  862.3,
+    grapeRate:     1 / 5.66,
     rtp: 1.094,
   },
 };
@@ -69,7 +76,13 @@ export const REG_COINS      = 96;
 export const COINS_PER_SPIN = 3;
 
 export const HIGH_SETTING_THRESHOLD = 0.30;
-export const RTP_ALERT_THRESHOLD    = 1.00;
+
+// アラート閾値 (3段階)
+export const RTP_DANGER_THRESHOLD  = 1.00;  // 期待値マイナス: 退台必須
+export const RTP_CAUTION_THRESHOLD = 1.02;  // 期待値低め: 注意
+export const HIGH_DANGER_THRESHOLD = 0.15;  // 高設定確率が極端に低い: 危険
+// (後方互換)
+export const RTP_ALERT_THRESHOLD   = 1.00;
 
 export const SETTING_COLORS: Record<number, string> = {
   1: "#3b82f6",

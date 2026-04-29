@@ -9,6 +9,7 @@ interface Props {
   soloRegCount:   number;
   cherryBigCount: number;
   cherryRegCount: number;
+  grapeCount:     number;
   posteriors:     number[];
   expectedRTP:    number;
 }
@@ -24,6 +25,7 @@ export default function StatsDisplay({
   soloRegCount,
   cherryBigCount,
   cherryRegCount,
+  grapeCount,
   posteriors,
   expectedRTP,
 }: Props) {
@@ -77,6 +79,11 @@ export default function StatsDisplay({
           label="🍒重複REG"
           value={`${cherryRegCount}回 ${formatRate(cherryRegCount, totalSpins)}`}
           accent="text-purple-300"
+        />
+        <StatBox
+          label="🍇ブドウ"
+          value={`${grapeCount}回 ${formatRate(grapeCount, totalSpins)}`}
+          accent="text-green-300"
         />
       </div>
 

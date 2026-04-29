@@ -15,7 +15,7 @@ import { DEFAULT_PRIOR, SPECIAL_DAY_PRIOR } from "./constants";
 function makeDefaultSession(machineNumber = ""): SessionData {
   const special = isSpecialDay();
   const prior = special ? SPECIAL_DAY_PRIOR : DEFAULT_PRIOR;
-  const posteriors = computePosteriors(0, 0, 0, 0, 0, prior);
+  const posteriors = computePosteriors(0, 0, 0, 0, 0, 0, prior);
   return {
     machineNumber,
     totalSpins:     0,
@@ -23,6 +23,7 @@ function makeDefaultSession(machineNumber = ""): SessionData {
     soloRegCount:   0,
     cherryBigCount: 0,
     cherryRegCount: 0,
+    grapeCount:     0,
     priorType: special ? "special_day" : "uniform",
     priorProbabilities: prior,
     posteriors,
@@ -40,6 +41,7 @@ function recompute(session: SessionData): SessionData {
     session.soloRegCount,
     session.cherryBigCount,
     session.cherryRegCount,
+    session.grapeCount,
     session.priorProbabilities,
   );
   return {
@@ -61,6 +63,7 @@ type Action =
   | { type: "ADD_SOLO_REG" }
   | { type: "ADD_CHERRY_BIG" }
   | { type: "ADD_CHERRY_REG" }
+  | { type: "ADD_GRAPE" }
   | { type: "UNDO" }
   | { type: "SET_PRIOR"; prior: number[]; priorType: SessionData["priorType"] }
   | { type: "RESET" }
@@ -101,6 +104,9 @@ function reducer(state: StoreState, action: Action): StoreState {
     case "ADD_CHERRY_REG":
       return push({ ...state.session, cherryRegCount: state.session.cherryRegCount + 1 });
 
+    case "ADD_GRAPE":
+      return push({ ...state.session, grapeCount: state.session.grapeCount + 1 });
+
     case "UNDO":
       if (state.history.length === 0) return state;
       return { session: state.history[0], history: state.history.slice(1) };
@@ -125,6 +131,7 @@ function reducer(state: StoreState, action: Action): StoreState {
           soloRegCount:   action.session.soloRegCount   ?? 0,
           cherryBigCount: action.session.cherryBigCount ?? 0,
           cherryRegCount: action.session.cherryRegCount ?? 0,
+          grapeCount:     action.session.grapeCount     ?? 0,
         },
         history: [],
       };
@@ -163,6 +170,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             soloRegCount:   saved.soloRegCount   ?? 0,
             cherryBigCount: saved.cherryBigCount ?? 0,
             cherryRegCount: saved.cherryRegCount ?? 0,
+            grapeCount:     saved.grapeCount     ?? 0,
           };
           return { session, history: [] };
         }

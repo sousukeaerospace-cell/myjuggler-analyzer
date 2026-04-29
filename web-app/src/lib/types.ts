@@ -5,6 +5,7 @@ export interface SessionData {
   soloRegCount:   number;
   cherryBigCount: number;
   cherryRegCount: number;
+  grapeCount:     number;
   priorType: "uniform" | "special_day" | "carryover";
   priorProbabilities: number[];
   posteriors: number[];

@@ -99,6 +99,18 @@ export default function InputPanel() {
         </button>
       </div>
 
+      {/* ブドウボタン */}
+      <button
+        onClick={() => dispatch({ type: "ADD_GRAPE" })}
+        className="w-full bg-purple-900 active:bg-purple-800 text-white rounded-2xl py-4 flex items-center justify-center gap-3 shadow-lg touch-manipulation border border-purple-700"
+      >
+        <span className="text-2xl">🍇</span>
+        <div className="text-left">
+          <p className="text-base font-black leading-tight">ブドウ</p>
+          <p className="text-xs opacity-70">{session.grapeCount}回カウント済み</p>
+        </div>
+      </button>
+
       {/* Undo / リセット */}
       <div className="grid grid-cols-2 gap-3">
         <button

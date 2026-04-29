@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { StoreProvider, useStore } from "@/lib/store";
 import SettingChart from "@/components/SettingChart";
 import InputPanel from "@/components/InputPanel";
-import AlertBanner from "@/components/AlertBanner";
+import AlertBanner, { getAlertLevel } from "@/components/AlertBanner";
 import StatsDisplay from "@/components/StatsDisplay";
 import SessionHistory, { saveToHistory } from "@/components/SessionHistory";
 import PriorSettings from "@/components/PriorSettings";
@@ -15,24 +15,22 @@ import { HIGH_SETTING_THRESHOLD } from "@/lib/constants";
 
 function App() {
   const { session, dispatch } = useStore();
-  const [showHistory, setShowHistory]       = useState(false);
-  const [showPrior, setShowPrior]           = useState(false);
-  const [showPrevDay, setShowPrevDay]       = useState(false);
+  const [showHistory, setShowHistory]           = useState(false);
+  const [showPrior, setShowPrior]               = useState(false);
+  const [showPrevDay, setShowPrevDay]           = useState(false);
   const [importedMachines, setImportedMachines] = useState<MachineRecord[]>([]);
-  const [threshold, setThreshold]           = useState(HIGH_SETTING_THRESHOLD);
-  const [machineInput, setMachineInput]     = useState(session.machineNumber);
+  const [threshold, setThreshold]               = useState(HIGH_SETTING_THRESHOLD);
+  const [machineInput, setMachineInput]         = useState(session.machineNumber);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const todaySpecial = isSpecialDay();
 
-  // 台番号確定
   const commitMachine = () => {
     if (machineInput.trim()) {
       dispatch({ type: "SET_MACHINE", machineNumber: machineInput.trim() });
     }
   };
 
-  // JSON インポート
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -61,25 +59,61 @@ function App() {
     e.target.value = "";
   };
 
-  // セッションを履歴に自動保存 (更新のたび)
   useEffect(() => {
     if (session.totalSpins > 0) {
       saveToHistory(session);
     }
   }, [session.updatedAt]);
 
-  // 背景色: 期待値マイナス時は赤フラッシュ
-  const isDanger = session.expectedRTP < 1.0;
-  const isHighCaution = session.highSettingProb < threshold;
+  // 3段階アラートレベル
+  const alertLevel = getAlertLevel(session.expectedRTP, session.highSettingProb, threshold);
+  const isDanger   = alertLevel === "danger";
+  const isCaution  = alertLevel === "caution";
+
+  const bgClass = isDanger
+    ? "bg-red-950"
+    : isCaution
+    ? "bg-amber-950"
+    : "bg-gray-950";
+
+  const headerBg = isDanger
+    ? "bg-red-950/95"
+    : isCaution
+    ? "bg-amber-950/95"
+    : "bg-gray-950/90";
+
+  const headerBorder = isDanger
+    ? "border-red-800"
+    : isCaution
+    ? "border-amber-800"
+    : "border-gray-800";
 
   return (
-    <div
-      className={`min-h-screen flex flex-col transition-colors duration-500 ${
-        isDanger ? "bg-red-950" : "bg-gray-950"
-      }`}
-    >
+    <div className={`min-h-screen flex flex-col transition-colors duration-700 ${bgClass}`}>
+
+      {/* 危険時: 全画面パルスオーバーレイ */}
+      {isDanger && (
+        <div
+          className="fixed inset-0 pointer-events-none z-20 animate-pulse"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(220,38,38,0.25) 0%, rgba(220,38,38,0.05) 60%, transparent 80%)",
+          }}
+        />
+      )}
+      {/* 注意時: 画面端アンバーグロー */}
+      {isCaution && (
+        <div
+          className="fixed inset-0 pointer-events-none z-20 animate-pulse"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(217,119,6,0.15) 0%, rgba(217,119,6,0.04) 60%, transparent 80%)",
+          }}
+        />
+      )}
+
       {/* ヘッダー */}
-      <header className="sticky top-0 z-30 bg-gray-950/90 backdrop-blur border-b border-gray-800 px-4 py-3">
+      <header
+        className={`sticky top-0 z-30 ${headerBg} backdrop-blur border-b ${headerBorder} px-4 py-3 transition-colors duration-700`}
+      >
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-2">
             <span className="text-xl">🎰</span>
@@ -87,6 +121,12 @@ function App() {
               <h1 className="text-sm font-bold text-white leading-tight">マイジャグラーV 設定推定</h1>
               {todaySpecial && (
                 <span className="text-xs text-amber-400">🎯 高設定期待日</span>
+              )}
+              {isDanger && (
+                <span className="text-xs text-red-400 font-bold animate-pulse">🚨 退台推奨</span>
+              )}
+              {isCaution && !isDanger && (
+                <span className="text-xs text-amber-400 font-bold">⚠ 注意</span>
               )}
             </div>
           </div>
@@ -117,7 +157,7 @@ function App() {
       </header>
 
       {/* メインコンテンツ */}
-      <main className="flex-1 overflow-y-auto px-4 py-4 space-y-4 max-w-lg mx-auto w-full pb-6">
+      <main className="flex-1 overflow-y-auto px-4 py-4 space-y-4 max-w-lg mx-auto w-full pb-6 relative z-10">
 
         {/* 台番号入力 */}
         <div className="flex gap-2 items-center">
@@ -156,6 +196,7 @@ function App() {
           soloRegCount={session.soloRegCount}
           cherryBigCount={session.cherryBigCount}
           cherryRegCount={session.cherryRegCount}
+          grapeCount={session.grapeCount}
           posteriors={session.posteriors}
           expectedRTP={session.expectedRTP}
         />
@@ -164,7 +205,7 @@ function App() {
         <InputPanel />
 
         {/* プライアー情報 */}
-        <div className="bg-gray-900 rounded-xl px-4 py-2 flex items-center justify-between">
+        <div className="bg-gray-900/80 rounded-xl px-4 py-2 flex items-center justify-between">
           <span className="text-xs text-gray-500">
             事前確率: {
               session.priorType === "carryover" ? "据え置き引き継ぎ" :
