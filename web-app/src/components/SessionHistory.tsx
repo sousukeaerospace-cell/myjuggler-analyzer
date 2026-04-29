@@ -88,7 +88,7 @@ export default function SessionHistory({ onClose }: Props) {
                   <button onClick={() => handleLoad(entry)} className="flex-1 text-left">
                     <p className="text-white font-bold">{s.machineNumber || "台番号不明"}</p>
                     <p className="text-gray-400 text-xs">
-                      {date} {time} / {s.totalSpins}G / BIG:{s.bigCount} REG:{s.regCount}
+                      {date} {time} / {s.totalSpins}G / BIG:{(s.soloBigCount ?? 0) + (s.cherryBigCount ?? 0)} REG:{(s.soloRegCount ?? 0) + (s.cherryRegCount ?? 0)}
                     </p>
                     <p className="text-xs mt-0.5">
                       <span className={s.expectedRTP >= 1 ? "text-green-400" : "text-red-400"}>

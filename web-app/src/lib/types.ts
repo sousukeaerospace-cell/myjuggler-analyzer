@@ -1,17 +1,16 @@
 export interface SessionData {
   machineNumber: string;
   totalSpins: number;
-  bigCount: number;
-  regCount: number;
-  grapeCount: number;
+  soloBigCount:   number;
+  soloRegCount:   number;
   cherryBigCount: number;
   cherryRegCount: number;
   priorType: "uniform" | "special_day" | "carryover";
-  priorProbabilities: number[];  // length 6, settings 1-6
-  posteriors: number[];           // length 6
+  priorProbabilities: number[];
+  posteriors: number[];
   expectedRTP: number;
-  highSettingProb: number;       // P(S >= 4)
-  startedAt: string;             // ISO timestamp
+  highSettingProb: number;
+  startedAt: string;
   updatedAt: string;
 }
 

@@ -152,9 +152,10 @@ function App() {
         {/* 実戦データ表示 */}
         <StatsDisplay
           totalSpins={session.totalSpins}
-          bigCount={session.bigCount}
-          regCount={session.regCount}
-          grapeCount={session.grapeCount}
+          soloBigCount={session.soloBigCount}
+          soloRegCount={session.soloRegCount}
+          cherryBigCount={session.cherryBigCount}
+          cherryRegCount={session.cherryRegCount}
           posteriors={session.posteriors}
           expectedRTP={session.expectedRTP}
         />
