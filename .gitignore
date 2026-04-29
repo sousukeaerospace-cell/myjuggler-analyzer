@@ -4,8 +4,10 @@ node_modules/
 .env
 .env.local
 .env.production
-browser_data/
-maebashi_garden_data.json
+data-collector/browser_data/
+data-collector/screenshots/
+data-collector/dom_dump.json
+data-collector/maebashi_garden_data.json
 __pycache__/
 *.pyc
 .DS_Store
