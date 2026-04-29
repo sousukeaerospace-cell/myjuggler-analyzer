@@ -1,0 +1,25 @@
+{
+  "name": "マイジャグラーV 設定推定",
+  "short_name": "ジャグラー解析",
+  "description": "D-STATION前橋ガーデン店 マイジャグラーV リアルタイム設定推定ツール",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#111827",
+  "orientation": "portrait",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

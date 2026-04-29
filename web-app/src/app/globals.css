@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+/* タップ操作の押下感 */
+button:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
+}
+
+/* スクロールバー非表示 */
+::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,11 @@
+node_modules/
+.next/
+*.local
+.env
+.env.local
+.env.production
+browser_data/
+maebashi_garden_data.json
+__pycache__/
+*.pyc
+.DS_Store

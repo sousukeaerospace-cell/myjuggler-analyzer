@@ -1,0 +1,4 @@
+playwright==1.44.0
+pillow==10.3.0
+numpy==1.26.4
+aiofiles==23.2.1
